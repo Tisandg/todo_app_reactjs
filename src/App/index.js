@@ -1,33 +1,44 @@
 import React from 'react';
 import { AppUI } from './AppUI'
 
-const defaultTodos = [
-  { text: 'Cortar Cebolla', completed: true },
-  { text: 'Curso intro a ReactJS', completed: false },
-  { text: 'Llorar con la llorona', completed: true }
-];
+// const defaultTodos = [
+//   { text: 'Cortar Cebolla', completed: true },
+//   { text: 'Curso intro a ReactJS', completed: false },
+//   { text: 'Llorar con la llorona', completed: true }
+// ];
+
+function useLocalStorage(itemName, initialValue){
+
+  //Get values of task from LocalStorage
+  const localStorageItem = localStorage.getItem(itemName);
+  let parsedItem;
+
+  if(!localStorageItem){
+    localStorage.setItem(itemName, JSON.stringify(initialValue));
+    parsedItem = initialValue;
+  }else {
+    parsedItem = JSON.parse(localStorageItem);
+  }
+
+  const[item, setItem] = React.useState(parsedItem);
+
+  const saveItem = (newItem) => {
+    const stringifyItem = JSON.stringify(newItem);
+    localStorage.setItem(itemName, stringifyItem);
+    setItem(newItem);
+  };
+
+  return [
+    item,
+    saveItem,
+  ]
+}
 
 function App() {
 
-  //Get values of task from LocalStorage
-  const localStorageTodos = localStorage.getItem('TODOS_V1');
-  let parsedTodos;
-
-  if(!localStorageTodos){
-    localStorage.setItem('TODOS_V1', JSON.stringify([]));
-    parsedTodos = [];
-  }else {
-    parsedTodos = JSON.parse(localStorageTodos);
-  }
-
-  const saveTodos = (newTodos) => {
-    const stringifyTodos = JSON.stringify(newTodos);
-    localStorage.setItem('TODOS_V1', stringifyTodos);
-    setTodos(newTodos);
-  };
+  const [todos, saveTodos] = useLocalStorage('TODOS_V1', []);
 
   //Create state
-  const[todos, setTodos] = React.useState(parsedTodos);
   const [searchValue, setSearchValue] = React.useState('');
 
   //!! To check if it is true
