@@ -7,36 +7,64 @@ import { AppUI } from './AppUI'
 //   { text: 'Llorar con la llorona', completed: true }
 // ];
 
+
+//custom hook
+//Changes inside this hook notify to React to render again the component.
 function useLocalStorage(itemName, initialValue){
 
-  //Get values of task from LocalStorage
-  const localStorageItem = localStorage.getItem(itemName);
-  let parsedItem;
+  const[error, setError] = React.useState(false);
+  const[loading, setLoading] = React.useState(true);
+  const[item, setItem] = React.useState(initialValue);
 
-  if(!localStorageItem){
-    localStorage.setItem(itemName, JSON.stringify(initialValue));
-    parsedItem = initialValue;
-  }else {
-    parsedItem = JSON.parse(localStorageItem);
-  }
+  React.useEffect(() => {
+    setTimeout(() => {
+      try{
+        //Get values of task from LocalStorage
+        const localStorageItem = localStorage.getItem(itemName);
+        let parsedItem;
 
-  const[item, setItem] = React.useState(parsedItem);
+        if(!localStorageItem){
+          localStorage.setItem(itemName, JSON.stringify(initialValue));
+          parsedItem = initialValue;
+        }else {
+          parsedItem = JSON.parse(localStorageItem);
+        }
+
+        setItem(parsedItem)
+        setLoading(false);
+      } catch(error) {
+        setError(true);
+      }
+    }, 1000);
+  });
+
 
   const saveItem = (newItem) => {
-    const stringifyItem = JSON.stringify(newItem);
-    localStorage.setItem(itemName, stringifyItem);
-    setItem(newItem);
+    try{
+      const stringifyItem = JSON.stringify(newItem);
+      localStorage.setItem(itemName, stringifyItem);
+      setItem(newItem);
+    } catch(error) {
+      setError(true);
+    }
   };
 
-  return [
+  return {
     item,
     saveItem,
-  ]
+    loading,
+    error,
+  };
 }
 
 function App() {
 
-  const [todos, saveTodos] = useLocalStorage('TODOS_V1', []);
+  const {
+    item: todos, 
+    saveItem: saveTodos,
+    loading,
+    error,
+  } = useLocalStorage('TODOS_V1', []);
 
   //Create state
   const [searchValue, setSearchValue] = React.useState('');
@@ -70,6 +98,7 @@ function App() {
     saveTodos(newTodos);
   };
 
+
   return (
     <AppUI
       totalTodos={totalTodos}
@@ -79,6 +108,8 @@ function App() {
       searchedTodos={searchedTodos}
       completeTodos={completeTodos}
       deleteTodo={deleteTodo}
+      loading={loading}
+      error={error}
     />
   );
 }
