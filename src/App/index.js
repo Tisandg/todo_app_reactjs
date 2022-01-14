@@ -4,6 +4,7 @@ import { TodoProvider } from '../TodoContext';
 
 function App() {
 
+  //Use a provider to pass information to the tree below
   return (
     <TodoProvider>
       <AppUI/>

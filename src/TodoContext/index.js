@@ -21,13 +21,13 @@ function TodoProvider(props) {
 
     let searchedTodos = [];
     if (!searchValue.length >= 1){
-    searchedTodos = todos;
+        searchedTodos = todos;
     }else {
-    searchedTodos = todos.filter(todo => {
-        const todoText = todo.text.toLowerCase();
-        const searchText = searchValue.toLowerCase();
-        return todoText.includes(searchText);
-    });
+        searchedTodos = todos.filter(todo => {
+            const todoText = todo.text.toLowerCase();
+            const searchText = searchValue.toLowerCase();
+            return todoText.includes(searchText);
+        });
     }
 
     const completeTodos = (text) => {
@@ -54,7 +54,7 @@ function TodoProvider(props) {
             completeTodos,
             deleteTodo,
             loading,
-            error,
+            error
         }}>
             { props.children }
         </TodoContext.Provider>

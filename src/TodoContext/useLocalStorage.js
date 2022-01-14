@@ -1,6 +1,6 @@
 import React from 'react';
 
-//custom hook
+//Custom hook
 //Changes inside this hook notify to React to render again the component.
 function useLocalStorage(itemName, initialValue){
 
